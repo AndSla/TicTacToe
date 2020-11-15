@@ -1,36 +1,51 @@
 package com.nauka;
 
 import java.util.InputMismatchException;
+import java.util.Random;
 import java.util.Scanner;
 
 public class TicTacToe {
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
         char[][] gameBoard;
         int[] validCoords;
         char symbol;
+        int counter = 0;
 
-        System.out.print("Enter cells: ");
-        String fields = sc.nextLine();
-
-        gameBoard = getStartingGameBoard(fields);
+        gameBoard = getStartingGameBoard("_________");
 
         drawGameBoard(gameBoard);
 
-        while (true) {
-            validCoords = getValidCoordinates();
-            if (isFieldEmpty(validCoords, gameBoard)) {
-                break;
+        do {
+
+            while (true) {
+
+                if (counter % 2 == 0) {
+                    validCoords = getHumanMove();
+                } else {
+                    validCoords = getAIMoveEasy();
+                }
+
+                if (isFieldEmpty(validCoords, gameBoard)) {
+                    if (counter % 2 != 0) {
+                        System.out.println("Making move level \"easy\"");
+                    }
+                    break;
+                } else if (counter % 2 == 0) {
+                    System.out.println("This cell is occupied! Choose another one!");
+                }
+
             }
-            System.out.println("This cell is occupied! Choose another one!");
-        }
 
-        symbol = nextSymbol(gameBoard);
+            counter++;
 
-        refreshGameBoard(symbol, validCoords, gameBoard);
+            symbol = nextSymbol(gameBoard);
 
-        drawGameBoard(gameBoard);
+            makeMove(symbol, validCoords, gameBoard);
+
+            drawGameBoard(gameBoard);
+
+        } while (checkState(gameBoard).equals("Game not finished"));
 
         System.out.println(checkState(gameBoard));
 
@@ -69,7 +84,7 @@ public class TicTacToe {
         System.out.println("---------");
     }
 
-    public static int[] getValidCoordinates() {
+    public static int[] getHumanMove() {
         int coordX;
         int coordY;
 
@@ -154,7 +169,7 @@ public class TicTacToe {
 
     }
 
-    public static void refreshGameBoard(char symbol, int[] validCoords, char[][] gameBoard) {
+    public static void makeMove(char symbol, int[] validCoords, char[][] gameBoard) {
         int[] newCoords = translateCoordinates(validCoords);
         int i = newCoords[0];
         int j = newCoords[1];
@@ -203,6 +218,14 @@ public class TicTacToe {
 
         return msg;
 
+    }
+
+    public static int[] getAIMoveEasy() {
+        Random ran = new Random();
+        int coordX = ran.nextInt(3) + 1;
+        int coordY = ran.nextInt(3) + 1;
+
+        return new int[]{coordX, coordY};
     }
 
 }
