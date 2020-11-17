@@ -13,44 +13,66 @@ public class Game {
         this.activePlayer = activePlayer;
     }
 
-    public void humanMove() {
-        int coordX;
-        int coordY;
+    public void playerMove() {
+
         int[] validCoords;
 
         do {
 
-            while (true) {
-
-                System.out.print("Enter the coordinates: ");
-
-                try {
-                    Scanner sc = new Scanner(System.in);
-                    coordX = sc.nextInt();
-                    coordY = sc.nextInt();
-                    if (coordX > 3 || coordX < 1 || coordY > 3 || coordY < 1) {
-                        System.out.println("Coordinates should be from 1 to 3!");
-                    } else {
-                        break;
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.println("You should enter numbers!");
-                }
-
+            switch (activePlayer.type) {
+                case "user":
+                    validCoords = humanMove();
+                    break;
+                case "easy":
+                    validCoords = easyAiMove();
+                    break;
+                default:
+                    validCoords = new int[]{,};
+                    break;
             }
 
-            validCoords = new int[]{coordX, coordY};
-            if (!isFieldEmpty(validCoords, gameBoard.gameBoardFields)) {
+            if (!isFieldEmpty(validCoords, gameBoard.gameBoardFields) && "user".equals(activePlayer.type)) {
                 System.out.println("This cell is occupied! Choose another one!");
             }
 
         } while (!isFieldEmpty(validCoords, gameBoard.gameBoardFields));
 
+        if (!"user".equals(activePlayer.type)) {
+            System.out.println("Making move level \"easy\"");
+        }
+
         makeMove(activePlayer.symbol, validCoords, gameBoard.gameBoardFields);
 
     }
 
-    public int[] easyAiMove(){
+    public int[] humanMove() {
+        int coordX;
+        int coordY;
+
+        while (true) {
+
+            System.out.print("Enter the coordinates: ");
+
+            try {
+                Scanner sc = new Scanner(System.in);
+                coordX = sc.nextInt();
+                coordY = sc.nextInt();
+                if (coordX > 3 || coordX < 1 || coordY > 3 || coordY < 1) {
+                    System.out.println("Coordinates should be from 1 to 3!");
+                } else {
+                    break;
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("You should enter numbers!");
+            }
+
+        }
+
+        return new int[]{coordX, coordY};
+
+    }
+
+    public int[] easyAiMove() {
         Random ran = new Random();
         int coordX = ran.nextInt(3) + 1;
         int coordY = ran.nextInt(3) + 1;
