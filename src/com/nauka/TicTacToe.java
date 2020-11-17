@@ -7,47 +7,41 @@ import java.util.Scanner;
 public class TicTacToe {
 
     public static void main(String[] args) {
-        char[][] gameBoard;
-        int[] validCoords;
-        char symbol;
-        int counter = 0;
+        Scanner sc = new Scanner(System.in);
+        String cmdLine;
+        String[] cmdAndParams;
+        String command = null;
+        String playerOne = null;
+        String playerTwo = null;
+        boolean keepPlaying = true;
 
-        gameBoard = getStartingGameBoard("_________");
-
-        drawGameBoard(gameBoard);
-
-        do {
+        while (keepPlaying) {
 
             while (true) {
-
-                if (counter % 2 == 0) {
-                    validCoords = getHumanMove();
-                } else {
-                    validCoords = getAIMoveEasy();
-                }
-
-                if (isFieldEmpty(validCoords, gameBoard)) {
-                    if (counter % 2 != 0) {
-                        System.out.println("Making move level \"easy\"");
-                    }
+                System.out.print("Input > ");
+                cmdLine = sc.nextLine();
+                // start - exact match, \s - whitespace, user|easy - exact match user or easy
+                if (cmdLine.matches("start\\s(user|easy)\\s(user|easy)")) {
+                    cmdAndParams = cmdLine.split(" ", 3);
+                    command = cmdAndParams[0];
+                    playerOne = cmdAndParams[1];
+                    playerTwo = cmdAndParams[2];
                     break;
-                } else if (counter % 2 == 0) {
-                    System.out.println("This cell is occupied! Choose another one!");
+                } else if ("exit".equals(cmdLine)) {
+                    keepPlaying = false;
+                    break;
+                } else {
+                    System.out.println("Bad input!");
                 }
-
             }
 
-            counter++;
+            while ("start".equals(command)) {
+                System.out.println(playerOne);
+                System.out.println(playerTwo);
+                command = "gameEnded";
+            }
 
-            symbol = nextSymbol(gameBoard);
-
-            makeMove(symbol, validCoords, gameBoard);
-
-            drawGameBoard(gameBoard);
-
-        } while (checkState(gameBoard).equals("Game not finished"));
-
-        System.out.println(checkState(gameBoard));
+        }
 
     }
 
