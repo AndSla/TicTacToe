@@ -11,6 +11,14 @@ public class Player {
         this.symbol = symbol;
     }
 
+    public char otherPlayerSymbol() {
+        if (symbol == 'X') {
+            return 'O';
+        } else {
+            return 'X';
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

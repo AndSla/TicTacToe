@@ -18,7 +18,7 @@ public class TicTacToe {
                 System.out.print("Input command: ");
                 cmdLine = sc.nextLine();
                 // start - exact match, \s - whitespace, user|easy - exact match user or easy
-                if (cmdLine.matches("start\\s(user|easy)\\s(user|easy)")) {
+                if (cmdLine.matches("start\\s(user|easy|medium)\\s(user|easy|medium)")) {
                     cmdAndParams = cmdLine.split(" ", 3);
                     playerOneType = cmdAndParams[1];
                     playerTwoType = cmdAndParams[2];
