@@ -29,6 +29,9 @@ public class Game {
                 case "medium":
                     validCoords = mediumAiMove();
                     break;
+                case "hard":
+                    validCoords = hardAiMove();
+                    break;
                 default:
                     validCoords = new int[]{,};
                     break;
@@ -97,6 +100,10 @@ public class Game {
 
     }
 
+    public int[] hardAiMove() {
+        return new int[]{,};
+    }
+
     private boolean isFieldEmpty(int[] validCoords, char[][] gameBoard) {
         int[] newCoords = translateCoordinates(validCoords);
         int i = newCoords[0];
@@ -108,45 +115,17 @@ public class Game {
 
     // translate game coordinates into array coordinates
     private int[] translateCoordinates(int[] validCoords) {
-        int i = validCoords[1];
-        int j = validCoords[0];
+        int i = validCoords[0] - 1;
+        int j = validCoords[1] - 1;
 
-        switch (i) {
-            case 1:
-                i = 2;  //i+1
-                j = j - 1;
-                break;
-            case 2:
-                i = 1;  //i-1
-                j = j - 1;
-                break;
-            case 3:
-                i = 0;  //i-3
-                j = j - 1;
-                break;
-        }
         return new int[]{i, j};
     }
 
     //translate array coordinates into game coordinates
     private int[] gameCoordinates(int[] validCoords) {
-        int i = validCoords[1];
-        int j = validCoords[0];
+        int i = validCoords[0] + 1;
+        int j = validCoords[1] + 1;
 
-        switch (j) {
-            case 0:
-                i = i + 1;
-                j = 3;
-                break;
-            case 1:
-                i = i + 1;
-                j = 2;
-                break;
-            case 2:
-                i = i + 1;
-                j = 1;
-                break;
-        }
         return new int[]{i, j};
     }
 
