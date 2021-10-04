@@ -90,10 +90,10 @@ public class Game {
         char aiSymbol = activePlayer.symbol;
         char userSymbol = activePlayer.otherPlayerSymbol();
 
-        if (checkIfTwoSymbolsInARow(aiSymbol) != null) {
-            return checkIfTwoSymbolsInARow(aiSymbol);
-        } else if (checkIfTwoSymbolsInARow(userSymbol) != null) {
-            return checkIfTwoSymbolsInARow(userSymbol);
+        if (checkIfTwoSymbolsInline(aiSymbol) != null) {
+            return checkIfTwoSymbolsInline(aiSymbol);
+        } else if (checkIfTwoSymbolsInline(userSymbol) != null) {
+            return checkIfTwoSymbolsInline(userSymbol);
         } else {
             return easyAiMove();
         }
@@ -138,7 +138,7 @@ public class Game {
 
     }
 
-    public int[] checkIfTwoSymbolsInARow(char symbol) {
+    public int[] checkIfTwoSymbolsInline(char symbol) {
         char[][] fields = gameBoard.gameBoardFields;
         int counter = 0;
         int[] result = null;
