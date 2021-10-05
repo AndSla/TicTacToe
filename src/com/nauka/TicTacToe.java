@@ -51,9 +51,9 @@ public class TicTacToe {
                     game.activePlayer = playerOne;
                 }
 
-            } while (gameBoard.checkState(gameBoard.gameBoardFields).equals("Game not finished"));
+            } while (gameBoard.checkState().equals("Game not finished"));
 
-            System.out.println(gameBoard.checkState(gameBoard.gameBoardFields));
+            System.out.println(gameBoard.checkState());
             System.out.println();
 
         }

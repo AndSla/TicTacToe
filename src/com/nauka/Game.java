@@ -1,5 +1,6 @@
 package com.nauka;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
@@ -37,17 +38,17 @@ public class Game {
                     break;
             }
 
-            if (!isFieldEmpty(validCoords, gameBoard.gameBoardFields) && "user".equals(activePlayer.type)) {
+            if (!isFieldEmpty(validCoords, gameBoard.fields) && "user".equals(activePlayer.type)) {
                 System.out.println("This cell is occupied! Choose another one!");
             }
 
-        } while (!isFieldEmpty(validCoords, gameBoard.gameBoardFields));
+        } while (!isFieldEmpty(validCoords, gameBoard.fields));
 
         if (!"user".equals(activePlayer.type)) {
             System.out.println("Making move level \"" + activePlayer.type + "\"");
         }
 
-        makeMove(activePlayer.symbol, validCoords, gameBoard.gameBoardFields);
+        makeMove(activePlayer.symbol, validCoords, gameBoard.fields);
 
     }
 
@@ -101,20 +102,58 @@ public class Game {
     }
 
     public int[] hardAiMove() {
+
+        minimax(gameBoard, activePlayer);
+
         return new int[]{,};
     }
 
-    private boolean isFieldEmpty(int[] validCoords, char[][] gameBoard) {
-        int[] newCoords = translateCoordinates(validCoords);
+    public int minimax(GameBoard newGameBoard, Player player) {
+        int score = 0;
+        ArrayList<Move> availableSpots = emptySpots(newGameBoard.fields);
+        ArrayList<Move> moves = new ArrayList<>();
+
+        if (player.type.equals("user") & newGameBoard.isWinnig(player.symbol)) {
+            score = -10;
+        } else if (!player.type.equals("user") & newGameBoard.isWinnig(player.symbol)) {
+            score = 10;
+        }
+
+//        for (int i = 0; i < availableSpots.size(); i++) {
+//
+//        }
+
+        return score;
+    }
+
+    private boolean isFieldEmpty(int[] validCoords, char[][] gameBoardFields) {
+        int[] newCoords = arrayCoordinates(validCoords);
         int i = newCoords[0];
         int j = newCoords[1];
 
-        return gameBoard[i][j] == ' ';
+        return gameBoardFields[i][j] == ' ';
+    }
+
+    private ArrayList<Move> emptySpots(char[][] gameBoardFields) {
+        ArrayList<Move> spots = new ArrayList<>();
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (gameBoardFields[i][j] == ' ') {
+                    Move emptySpot = new Move();
+                    emptySpot.setRow(i);
+                    emptySpot.setCol(j);
+                    spots.add(emptySpot);
+                }
+            }
+        }
+
+        return spots;
 
     }
 
     // translate game coordinates into array coordinates
-    private int[] translateCoordinates(int[] validCoords) {
+    private int[] arrayCoordinates(int[] validCoords) {
         int i = validCoords[0] - 1;
         int j = validCoords[1] - 1;
 
@@ -130,7 +169,7 @@ public class Game {
     }
 
     private void makeMove(char symbol, int[] validCoords, char[][] gameBoard) {
-        int[] newCoords = translateCoordinates(validCoords);
+        int[] newCoords = arrayCoordinates(validCoords);
         int i = newCoords[0];
         int j = newCoords[1];
 
@@ -139,7 +178,7 @@ public class Game {
     }
 
     public int[] checkIfTwoSymbolsInline(char symbol) {
-        char[][] fields = gameBoard.gameBoardFields;
+        char[][] fields = gameBoard.fields;
         int counter = 0;
         int[] result = null;
 
