@@ -11,12 +11,31 @@ public class Player {
         this.symbol = symbol;
     }
 
+    public Player() {
+    }
+
     public char otherPlayerSymbol() {
         if (symbol == 'X') {
             return 'O';
         } else {
             return 'X';
         }
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public char getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(char symbol) {
+        this.symbol = symbol;
     }
 
     @Override

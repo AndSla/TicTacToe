@@ -42,7 +42,6 @@ public class TicTacToe {
             gameBoard.drawGameBoard();
 
             do {
-
                 game.playerMove();
                 gameBoard.drawGameBoard();
                 if (game.activePlayer.equals(playerOne)) {

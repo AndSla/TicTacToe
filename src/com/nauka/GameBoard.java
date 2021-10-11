@@ -4,8 +4,8 @@ public class GameBoard {
     char[][] fields;
 
     //String startingBoard = "O_XX_X_OO";
-    String startingBoard = "O_XX_O__O";
-    //String startingBoard = "X_OO_____";
+    //String startingBoard = "O_XX_O__O";
+    String startingBoard = "X_OO_____";
     //String startingBoard = "X_OO_O_XX";
     //String startingBoard = "_________";     // starting board is empty = all 9 fields empty
     //String startingBoard = "_X_______";     // starting board is empty = all 9 fields empty
@@ -14,14 +14,14 @@ public class GameBoard {
         this.setFields(this.startingBoard);
     }
 
-    public void setFields(String fields) {
+    public void setFields(String fieldsString) {
         char[][] gameBoard = new char[3][3];
         int k = 0;
 
         for (int i = 0; i < gameBoard.length; i++) {
             for (int j = 0; j < gameBoard.length; j++) {
-                if (fields.charAt(k) != '_') {
-                    gameBoard[i][j] = fields.charAt(k);
+                if (fieldsString.charAt(k) != '_') {
+                    gameBoard[i][j] = fieldsString.charAt(k);
                 } else {
                     gameBoard[i][j] = ' ';
                 }
@@ -32,17 +32,20 @@ public class GameBoard {
         this.fields = gameBoard;
     }
 
-    public String getFields() {
-        StringBuilder fildsy = new StringBuilder();
+    public char[][] getFields() {
+        return fields;
+    }
+
+    public String getFieldsString() {
+        StringBuilder fieldsString = new StringBuilder();
 
         for (char[] field : this.fields) {
             for (int j = 0; j < this.fields.length; j++) {
-                fildsy.append(field[j]);
+                fieldsString.append(field[j]);
             }
-
         }
 
-        return fildsy.toString();
+        return fieldsString.toString();
     }
 
     public void drawGameBoard() {

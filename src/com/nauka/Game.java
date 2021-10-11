@@ -9,21 +9,25 @@ public class Game {
     GameBoard gameBoard;
     Player activePlayer;
     Player otherPlayer;
-    Player huPlayer;
-    Player aiPlayer;
+    Player huPlayer = new Player();
+    Player aiPlayer = new Player();
     ArrayList<Move> moves = new ArrayList<>();
-    Result result = new Result();
+    Move minimaxResult = new Move();
 
     public Game(GameBoard gameBoard, Player activePlayer, Player otherPlayer) {
         this.gameBoard = gameBoard;
         this.activePlayer = activePlayer;
         this.otherPlayer = otherPlayer;
-        if (activePlayer.type.equals("user")) {
-            huPlayer = activePlayer;
-            aiPlayer = otherPlayer;
+        if (activePlayer.type.equals("hard")) {
+            aiPlayer.setType(activePlayer.getType());
+            aiPlayer.setSymbol(activePlayer.getSymbol());
+            huPlayer.setType(otherPlayer.getType());
+            huPlayer.setSymbol(otherPlayer.getSymbol());
         } else {
-            huPlayer = otherPlayer;
-            aiPlayer = activePlayer;
+            aiPlayer.setType(otherPlayer.getType());
+            aiPlayer.setSymbol(otherPlayer.getSymbol());
+            huPlayer.setType(activePlayer.getType());
+            huPlayer.setSymbol(activePlayer.getSymbol());
         }
     }
 
@@ -33,7 +37,7 @@ public class Game {
 
         do {
 
-            switch (activePlayer.type) {
+            switch (activePlayer.getType()) {
                 case "user":
                     validCoords = humanMove();
                     break;
@@ -51,17 +55,17 @@ public class Game {
                     break;
             }
 
-            if (!isFieldEmpty(validCoords, gameBoard.fields) && "user".equals(activePlayer.type)) {
+            if (!isFieldEmpty(validCoords, gameBoard.getFields()) && "user".equals(activePlayer.getType())) {
                 System.out.println("This cell is occupied! Choose another one!");
             }
 
-        } while (!isFieldEmpty(validCoords, gameBoard.fields));
+        } while (!isFieldEmpty(validCoords, gameBoard.getFields()));
 
-        if (!"user".equals(activePlayer.type)) {
-            System.out.println("Making move level \"" + activePlayer.type + "\"");
+        if (!"user".equals(activePlayer.getType())) {
+            System.out.println("Making move level \"" + activePlayer.getType() + "\"");
         }
 
-        makeMove(activePlayer.symbol, validCoords, gameBoard.fields);
+        makeMove(activePlayer.getSymbol(), validCoords, gameBoard.getFields());
 
     }
 
@@ -101,7 +105,7 @@ public class Game {
     }
 
     public int[] mediumAiMove() {
-        char aiSymbol = activePlayer.symbol;
+        char aiSymbol = activePlayer.getSymbol();
         char userSymbol = activePlayer.otherPlayerSymbol();
 
         if (checkIfTwoSymbolsInline(aiSymbol) != null) {
@@ -116,67 +120,71 @@ public class Game {
 
     public int[] hardAiMove() {
         GameBoard newGameBoard = new GameBoard();
-        newGameBoard.setFields(gameBoard.getFields());
+        newGameBoard.setFields(gameBoard.getFieldsString());
 
-        result = minimax(newGameBoard, aiPlayer);
+        minimaxResult = minimax(newGameBoard, aiPlayer);
 
-        return result.bestMove;
+        moves.clear();
+
+        return new int[]{minimaxResult.getRow(), minimaxResult.getCol()};
     }
 
-    public Result minimax(GameBoard newGameBoard, Player player) {
-        ArrayList<Move> availableSpots = emptySpots(newGameBoard.fields);
+    public Move minimax(GameBoard newGameBoard, Player player) {
+        ArrayList<Move> availableSpots = emptySpots(newGameBoard.getFields());
 
-        if (newGameBoard.isWinning(huPlayer.symbol)) {
-            result.score = -10;
-            return result;
-        } else if (newGameBoard.isWinning(aiPlayer.symbol)) {
-            result.score = 10;
-            return result;
+        if (newGameBoard.isWinning(huPlayer.getSymbol())) {
+            minimaxResult.setScore(-10);
+            return minimaxResult;
+        } else if (newGameBoard.isWinning(aiPlayer.getSymbol())) {
+            minimaxResult.setScore(10);
+            return minimaxResult;
         } else if (availableSpots.size() == 0) {
-            result.score = 0;
-            return result;
+            minimaxResult.setScore(0);
+            return minimaxResult;
         }
 
         for (Move availableSpot : availableSpots) {
             Move move = new Move();
-            move.row = availableSpot.row;
-            move.col = availableSpot.col;
+            move.setRow(availableSpot.getRow());
+            move.setCol(availableSpot.getCol());
 
-            int[] validCoords = new int[]{move.row, move.col};
-            makeMove(player.symbol, validCoords, newGameBoard.fields);
+            int[] validCoords = new int[]{move.getRow(), move.getCol()};
+            makeMove(player.getSymbol(), validCoords, newGameBoard.getFields());
 
             if (player.equals(aiPlayer)) {
-                result = minimax(newGameBoard, huPlayer);
+                minimaxResult = minimax(newGameBoard, huPlayer);
             } else {
-                result = minimax(newGameBoard, aiPlayer);
+                minimaxResult = minimax(newGameBoard, aiPlayer);
             }
 
-            move.score = result.score;
+            move.setScore(minimaxResult.getScore());
             moves.add(move);
 
-            makeMove(' ', validCoords, newGameBoard.fields);
+            makeMove(' ', validCoords, newGameBoard.getFields());
 
         }
 
         if (player.equals(aiPlayer)) {
             int bestScore = -10000;
             for (Move move : moves) {
-                if (move.score > bestScore) {
-                    bestScore = move.score;
-                    result.bestMove = new int[]{move.row, move.col};
+                if (move.getScore() > bestScore) {
+                    bestScore = move.getScore();
+                    minimaxResult.setRow(move.getRow());
+                    minimaxResult.setCol(move.getCol());
                 }
             }
         } else {
             int bestScore = 10000;
             for (Move move : moves) {
-                if (move.score < bestScore) {
-                    bestScore = move.score;
-                    result.bestMove = new int[]{move.row, move.col};
+                if (move.getScore() < bestScore) {
+                    bestScore = move.getScore();
+                    minimaxResult.setRow(move.getRow());
+                    minimaxResult.setCol(move.getCol());
                 }
             }
         }
 
-        return result;
+        return minimaxResult;
 
     }
 
@@ -194,8 +202,8 @@ public class Game {
             for (int j = 0; j < 3; j++) {
                 if (gameBoardFields[i][j] == ' ') {
                     Move emptySpot = new Move();
-                    emptySpot.row = i;
-                    emptySpot.col = j;
+                    emptySpot.setRow(i);
+                    emptySpot.setCol(j);
                     spots.add(emptySpot);
                 }
             }
@@ -214,7 +222,7 @@ public class Game {
     }
 
     public int[] checkIfTwoSymbolsInline(char symbol) {
-        char[][] fields = gameBoard.fields;
+        char[][] fields = gameBoard.getFields();
         int counter = 0;
         int[] result = null;
 
