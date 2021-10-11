@@ -8,10 +8,23 @@ import java.util.Scanner;
 public class Game {
     GameBoard gameBoard;
     Player activePlayer;
+    Player otherPlayer;
+    Player huPlayer;
+    Player aiPlayer;
+    ArrayList<Move> moves = new ArrayList<>();
+    Result result = new Result();
 
-    public Game(GameBoard gameBoard, Player activePlayer) {
+    public Game(GameBoard gameBoard, Player activePlayer, Player otherPlayer) {
         this.gameBoard = gameBoard;
         this.activePlayer = activePlayer;
+        this.otherPlayer = otherPlayer;
+        if (activePlayer.type.equals("user")) {
+            huPlayer = activePlayer;
+            aiPlayer = otherPlayer;
+        } else {
+            huPlayer = otherPlayer;
+            aiPlayer = activePlayer;
+        }
     }
 
     public void playerMove() {
@@ -75,14 +88,14 @@ public class Game {
 
         }
 
-        return new int[]{coordX, coordY};
+        return new int[]{coordX - 1, coordY - 1};
 
     }
 
     public int[] easyAiMove() {
         Random ran = new Random();
-        int coordX = ran.nextInt(3) + 1;
-        int coordY = ran.nextInt(3) + 1;
+        int coordX = ran.nextInt(3);
+        int coordY = ran.nextInt(3);
 
         return new int[]{coordX, coordY};
     }
@@ -102,34 +115,74 @@ public class Game {
     }
 
     public int[] hardAiMove() {
+        GameBoard newGameBoard = new GameBoard();
+        newGameBoard.setFields(gameBoard.getFields());
 
-        minimax(gameBoard, activePlayer);
+        result = minimax(newGameBoard, aiPlayer);
 
-        return new int[]{,};
+        return result.bestMove;
     }
 
-    public int minimax(GameBoard newGameBoard, Player player) {
-        int score = 0;
+    public Result minimax(GameBoard newGameBoard, Player player) {
         ArrayList<Move> availableSpots = emptySpots(newGameBoard.fields);
-        ArrayList<Move> moves = new ArrayList<>();
 
-        if (player.type.equals("user") & newGameBoard.isWinnig(player.symbol)) {
-            score = -10;
-        } else if (!player.type.equals("user") & newGameBoard.isWinnig(player.symbol)) {
-            score = 10;
+        if (newGameBoard.isWinning(huPlayer.symbol)) {
+            result.score = -10;
+            return result;
+        } else if (newGameBoard.isWinning(aiPlayer.symbol)) {
+            result.score = 10;
+            return result;
+        } else if (availableSpots.size() == 0) {
+            result.score = 0;
+            return result;
         }
 
-//        for (int i = 0; i < availableSpots.size(); i++) {
-//
-//        }
+        for (Move availableSpot : availableSpots) {
+            Move move = new Move();
+            move.row = availableSpot.row;
+            move.col = availableSpot.col;
 
-        return score;
+            int[] validCoords = new int[]{move.row, move.col};
+            makeMove(player.symbol, validCoords, newGameBoard.fields);
+
+            if (player.equals(aiPlayer)) {
+                result = minimax(newGameBoard, huPlayer);
+            } else {
+                result = minimax(newGameBoard, aiPlayer);
+            }
+
+            move.score = result.score;
+            moves.add(move);
+
+            makeMove(' ', validCoords, newGameBoard.fields);
+
+        }
+
+        if (player.equals(aiPlayer)) {
+            int bestScore = -10000;
+            for (Move move : moves) {
+                if (move.score > bestScore) {
+                    bestScore = move.score;
+                    result.bestMove = new int[]{move.row, move.col};
+                }
+            }
+        } else {
+            int bestScore = 10000;
+            for (Move move : moves) {
+                if (move.score < bestScore) {
+                    bestScore = move.score;
+                    result.bestMove = new int[]{move.row, move.col};
+                }
+            }
+        }
+
+        return result;
+
     }
 
     private boolean isFieldEmpty(int[] validCoords, char[][] gameBoardFields) {
-        int[] newCoords = arrayCoordinates(validCoords);
-        int i = newCoords[0];
-        int j = newCoords[1];
+        int i = validCoords[0];
+        int j = validCoords[1];
 
         return gameBoardFields[i][j] == ' ';
     }
@@ -141,8 +194,8 @@ public class Game {
             for (int j = 0; j < 3; j++) {
                 if (gameBoardFields[i][j] == ' ') {
                     Move emptySpot = new Move();
-                    emptySpot.setRow(i);
-                    emptySpot.setCol(j);
+                    emptySpot.row = i;
+                    emptySpot.col = j;
                     spots.add(emptySpot);
                 }
             }
@@ -152,26 +205,9 @@ public class Game {
 
     }
 
-    // translate game coordinates into array coordinates
-    private int[] arrayCoordinates(int[] validCoords) {
-        int i = validCoords[0] - 1;
-        int j = validCoords[1] - 1;
-
-        return new int[]{i, j};
-    }
-
-    //translate array coordinates into game coordinates
-    private int[] gameCoordinates(int[] validCoords) {
-        int i = validCoords[0] + 1;
-        int j = validCoords[1] + 1;
-
-        return new int[]{i, j};
-    }
-
     private void makeMove(char symbol, int[] validCoords, char[][] gameBoard) {
-        int[] newCoords = arrayCoordinates(validCoords);
-        int i = newCoords[0];
-        int j = newCoords[1];
+        int i = validCoords[0];
+        int j = validCoords[1];
 
         gameBoard[i][j] = symbol;
 
@@ -260,10 +296,6 @@ public class Game {
                 result = new int[]{2, 0};
             }
 
-        }
-
-        if (result != null) {
-            result = gameCoordinates(result);
         }
 
         return result;

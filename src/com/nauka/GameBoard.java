@@ -2,8 +2,13 @@ package com.nauka;
 
 public class GameBoard {
     char[][] fields;
-    //String startingBoard = "X__OX_XO_";     // starting board is empty = all 9 fields empty
-    String startingBoard = "_________";     // starting board is empty = all 9 fields empty
+
+    //String startingBoard = "O_XX_X_OO";
+    String startingBoard = "O_XX_O__O";
+    //String startingBoard = "X_OO_____";
+    //String startingBoard = "X_OO_O_XX";
+    //String startingBoard = "_________";     // starting board is empty = all 9 fields empty
+    //String startingBoard = "_X_______";     // starting board is empty = all 9 fields empty
 
     public GameBoard() {
         this.setFields(this.startingBoard);
@@ -25,6 +30,19 @@ public class GameBoard {
         }
 
         this.fields = gameBoard;
+    }
+
+    public String getFields() {
+        StringBuilder fildsy = new StringBuilder();
+
+        for (char[] field : this.fields) {
+            for (int j = 0; j < this.fields.length; j++) {
+                fildsy.append(field[j]);
+            }
+
+        }
+
+        return fildsy.toString();
     }
 
     public void drawGameBoard() {
@@ -83,7 +101,7 @@ public class GameBoard {
 
     }
 
-    public boolean isWinnig(char playerSymbol) {
+    public boolean isWinning(char playerSymbol) {
 
         boolean winning = false;
 

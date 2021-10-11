@@ -38,7 +38,7 @@ public class TicTacToe {
             GameBoard gameBoard = new GameBoard();
             Player playerOne = new Player(playerOneType, 'X');
             Player playerTwo = new Player(playerTwoType, 'O');
-            Game game = new Game(gameBoard, playerOne);
+            Game game = new Game(gameBoard, playerOne, playerTwo);
             gameBoard.drawGameBoard();
 
             do {
@@ -47,8 +47,10 @@ public class TicTacToe {
                 gameBoard.drawGameBoard();
                 if (game.activePlayer.equals(playerOne)) {
                     game.activePlayer = playerTwo;
+                    game.otherPlayer = playerOne;
                 } else {
                     game.activePlayer = playerOne;
+                    game.otherPlayer = playerTwo;
                 }
 
             } while (gameBoard.checkState().equals("Game not finished"));
