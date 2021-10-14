@@ -3,12 +3,7 @@ package com.nauka;
 public class GameBoard {
     char[][] fields;
 
-    //String startingBoard = "O_XX_X_OO";
-    //String startingBoard = "O_XX_O__O";
-    String startingBoard = "X_OO_____";
-    //String startingBoard = "X_OO_O_XX";
-    //String startingBoard = "_________";     // starting board is empty = all 9 fields empty
-    //String startingBoard = "_X_______";     // starting board is empty = all 9 fields empty
+    String startingBoard = "_________";     // starting board is empty = all 9 fields empty
 
     public GameBoard() {
         this.setFields(this.startingBoard);

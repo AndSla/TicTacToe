@@ -11,7 +11,6 @@ public class Game {
     Player otherPlayer;
     Player huPlayer = new Player();
     Player aiPlayer = new Player();
-    ArrayList<Move> moves = new ArrayList<>();
     Move minimaxResult = new Move();
 
     public Game(GameBoard gameBoard, Player activePlayer, Player otherPlayer) {
@@ -124,8 +123,6 @@ public class Game {
 
         minimaxResult = minimax(newGameBoard, aiPlayer);
 
-        moves.clear();
-
         return new int[]{minimaxResult.getRow(), minimaxResult.getCol()};
     }
 
@@ -142,6 +139,8 @@ public class Game {
             minimaxResult.setScore(0);
             return minimaxResult;
         }
+
+        ArrayList<Move> moves = new ArrayList<>();
 
         for (Move availableSpot : availableSpots) {
             Move move = new Move();
@@ -171,6 +170,7 @@ public class Game {
                     bestScore = move.getScore();
                     minimaxResult.setRow(move.getRow());
                     minimaxResult.setCol(move.getCol());
+                    minimaxResult.setScore(move.getScore());
                 }
             }
         } else {
@@ -180,6 +180,7 @@ public class Game {
                     bestScore = move.getScore();
                     minimaxResult.setRow(move.getRow());
                     minimaxResult.setCol(move.getCol());
+                    minimaxResult.setScore(move.getScore());
                 }
             }
         }
