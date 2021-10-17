@@ -123,6 +123,9 @@ public class Game {
         GameBoard newGameBoard = new GameBoard();
         newGameBoard.setFields(gameBoard.getFieldsString());
 
+        aiPlayer = activePlayer;
+        huPlayer = otherPlayer;
+
         minimaxResult = minimax(newGameBoard, aiPlayer);
 
         return new int[]{minimaxResult.getRow(), minimaxResult.getCol()};
