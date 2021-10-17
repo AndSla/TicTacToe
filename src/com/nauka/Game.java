@@ -54,11 +54,11 @@ public class Game {
                     break;
             }
 
-            if (!isFieldEmpty(validCoords, gameBoard.getFields()) && "user".equals(activePlayer.getType())) {
+            if (isFieldOccupied(validCoords, gameBoard.getFields()) && "user".equals(activePlayer.getType())) {
                 System.out.println("This cell is occupied! Choose another one!");
             }
 
-        } while (!isFieldEmpty(validCoords, gameBoard.getFields()));
+        } while (isFieldOccupied(validCoords, gameBoard.getFields()));
 
         if (!"user".equals(activePlayer.getType())) {
             System.out.println("Making move level \"" + activePlayer.getType() + "\"");
@@ -103,6 +103,7 @@ public class Game {
         return new int[]{coordX, coordY};
     }
 
+    // Checks if two same symbols are inline, if so - makes a move to win or to block opponent.
     public int[] mediumAiMove() {
         char aiSymbol = activePlayer.getSymbol();
         char userSymbol = activePlayer.otherPlayerSymbol();
@@ -117,6 +118,7 @@ public class Game {
 
     }
 
+    // Move is determined by minimax algorithm run on copied state of gameboard
     public int[] hardAiMove() {
         GameBoard newGameBoard = new GameBoard();
         newGameBoard.setFields(gameBoard.getFieldsString());
@@ -126,9 +128,11 @@ public class Game {
         return new int[]{minimaxResult.getRow(), minimaxResult.getCol()};
     }
 
+    // Implementation of minimax algorithm
     public Move minimax(GameBoard newGameBoard, Player player) {
         ArrayList<Move> availableSpots = emptySpots(newGameBoard.getFields());
 
+        // Checks of terminal states and give them scores and return result. Human/Opponent = -10, Ai = 10
         if (newGameBoard.isWinning(huPlayer.getSymbol())) {
             minimaxResult.setScore(-10);
             return minimaxResult;
@@ -142,6 +146,7 @@ public class Game {
 
         ArrayList<Move> moves = new ArrayList<>();
 
+        // Iteration on available empty spots on the board and make a move on first free spot...
         for (Move availableSpot : availableSpots) {
             Move move = new Move();
             move.setRow(availableSpot.getRow());
@@ -150,19 +155,23 @@ public class Game {
             int[] validCoords = new int[]{move.getRow(), move.getCol()};
             makeMove(player.getSymbol(), validCoords, newGameBoard.getFields());
 
+            // ... and collect score resulting from calling minimax algorithm with opponent player
             if (player.equals(aiPlayer)) {
                 minimaxResult = minimax(newGameBoard, huPlayer);
             } else {
                 minimaxResult = minimax(newGameBoard, aiPlayer);
             }
 
+            // Add move with score to array
             move.setScore(minimaxResult.getScore());
             moves.add(move);
 
+            // Clears the spot
             makeMove(' ', validCoords, newGameBoard.getFields());
 
         }
 
+        // Iteration on moves - if player is AI returns move with the highest score...
         if (player.equals(aiPlayer)) {
             int bestScore = -10000;
             for (Move move : moves) {
@@ -173,6 +182,7 @@ public class Game {
                     minimaxResult.setScore(move.getScore());
                 }
             }
+            // ...otherwise if player is human/opponent return the lowest score
         } else {
             int bestScore = 10000;
             for (Move move : moves) {
@@ -185,15 +195,16 @@ public class Game {
             }
         }
 
+        // Return chosen move - the best move according to minimax algorithm
         return minimaxResult;
 
     }
 
-    private boolean isFieldEmpty(int[] validCoords, char[][] gameBoardFields) {
+    private boolean isFieldOccupied(int[] validCoords, char[][] gameBoardFields) {
         int i = validCoords[0];
         int j = validCoords[1];
 
-        return gameBoardFields[i][j] == ' ';
+        return gameBoardFields[i][j] != ' ';
     }
 
     private ArrayList<Move> emptySpots(char[][] gameBoardFields) {

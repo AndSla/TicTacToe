@@ -9,6 +9,7 @@ public class GameBoard {
         this.setFields(this.startingBoard);
     }
 
+    // Takes string of 9 symbols representing gameboard (_ - empty, O, X) and transforms it into 3x3 matrix gameboard
     public void setFields(String fieldsString) {
         char[][] gameBoard = new char[3][3];
         int k = 0;
@@ -31,6 +32,7 @@ public class GameBoard {
         return fields;
     }
 
+    // Transforms gameboard 3x3 matrix into 9 symbols string
     public String getFieldsString() {
         StringBuilder fieldsString = new StringBuilder();
 
@@ -57,6 +59,7 @@ public class GameBoard {
         System.out.println("---------");
     }
 
+    //Checks state of the game - if game is finished, is it a draw or if anyone wins
     public String checkState() {
         String msg = "Draw";
 
@@ -99,6 +102,7 @@ public class GameBoard {
 
     }
 
+    // Does almost same thing as checkState - needs correction //Todo
     public boolean isWinning(char playerSymbol) {
 
         boolean winning = false;
